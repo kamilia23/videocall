@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.4.7/peerjs.min.js.map"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        
+        <title>Feel The Meet</title>
+
+        <script>
+            const myname = "<%= Myname %>"
+            const roomId = "<%= roomid %>"
+        </script>
+    </head>
+    <body>
+        <div class="modal fade" id="getCodeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Invite People</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="roomid"><strong><%= roomid %></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" onclick="cancel()">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="copy()">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+         
+        <div class="mainclone">
+            <div class="main_left">
+                <div class="main_videos">
+                    <div id="video-grids">
+                    </div>
+                </div>
+                <div class="main_controls">
+                    <div class="main_controls_block">
+                        <div class="main_controls_button" id="mic" onclick="muteUnmute()">
+                            <i class="fas fa-microphone-slash"></i>
+                            <span>Mute</span>
+                        </div>
+    
+                        <div class="main_controls_button" id="video" onclick="VideomuteUnmute()">
+                            <i class="fas fa-video-slash"></i>
+                            <span>Stop Video</span>
+                        </div>
+                    </div>
+                    <div class="main_controls_block">
+                        <div class="main_controls_button" onclick="invitebox()">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Invite</span>
+                        </div>
+                        <div class="main_controls_button">
+                            <i class="fas fa-user-friends"></i>
+                            <span>Participants</span>
+                        </div>
+                        <div class="main_controls_button" onclick="showchat()">
+                            <i class="fas fa-comment-alt"></i>
+                            <span>Chat</span>
+                        </div>
+                    </div>
+                    <div class="main_controls_block">
+                        <div class="main_controls_button leave_red">
+                            <span class="leave_meeting"><a href="/">Quitter</a></span>
+                        </div>
+                    </div>
+                </div> 
+
+            </div>
+            <div class="main_right" id="chat">
+                <div class="main_right_header">
+                    <h6>Zone de discussion</h6>
+                </div>
+                <div class="main__chat_window" id="main__chat_window">
+                    <ul class="messages" id="messageadd">
+    
+                    </ul>
+    
+                </div>
+                <div>
+                    <div class="main__message_container">
+                        <input type="text" id="chat_message" onkeydown="sendmessage(this)" placeholder="Tapez le message ici.." />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+         
+        <script src="http://localhost:3030/public/main.js"></script>
+
+    </body>
+     <style>
+        * {
+        margin: 0;
+        padding: 0;
+            }
+
+        html,
+        body {
+            height: 100%;
+            font-family: "Roboto", sans-serif;
+        }
+
+        #video-grids {
+            display: flex
+        }
+
+        a,
+        a:hover,
+        a:focus,
+        a:active {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .video-grid {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            align-items: center;
+            flex-wrap: wrap;
+            overflow-y: auto;
+            background-color: yellow;
+        }
+
+        h1 {
+            position: absolute;
+            bottom: 0;
+            left: 40%;
+        }
+
+        video {
+            display: block;
+            flex: 1;
+            object-fit: cover;
+            border: 5px solid #000;
+            max-width: 600px;
+            border-radius: 25px;
+        }
+
+        .mainclone {
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .main_left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main_right {
+            display: flex;
+            flex: 0.2;
+            flex-direction: column;
+            background-color: #242324;
+        }
+
+        .main_controls_block {
+            flex-direction: row;
+            display: flex;
+        }
+
+        .main_controls {
+            display: flex;
+            flex-direction: row;
+            background-color: #1C1E20;
+            color: white;
+            padding: 10px;
+            justify-content: space-between
+        }
+
+        .main_controls_button {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            padding: 3px 10px;
+            min-width: 80px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main_videos {
+            flex-grow: 1;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .leave_red {
+            color: white;
+            background-color: red;
+            border-radius: 5%;
+        }
+
+        .main__message_container {
+            padding: 20px 15px;
+            display: flex;
+        }
+
+        .main__message_container input {
+            flex-grow: 1;
+            background-color: transparent;
+            color: white;
+            border: none;
+            outline: none
+        }
+
+        .main__chat_window {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .main_controls_button:hover {
+            background-color: #686666;
+            border-radius: 25px;
+        }
+
+        .main_right_header {
+            color: white;
+            text-align: center;
+            font-size: 20px;
+            padding: 10px;
+            border-bottom: 2px solid #3d3d42;
+        }
+
+        .message {
+            color: white;
+            list-style-type: none;
+            border: 2px solid #3d3d42;
+            margin-bottom: 5px
+        }
+
+        .main_right_header h6 {
+            color: blue;
+            font-size: 30px;
+        }
+
+        @keyframes animate {
+            0% {
+                background-position: 0% 100%;
+            }
+            50% {
+                background-position: 100% 0%;
+            }
+            100% {
+                background-position: 0% 100%;
+            }
+        }
+
+     </style>
+</html>
